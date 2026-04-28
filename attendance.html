@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Attendance Tracker — Cloud Computing Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #1a237e, #283593);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .header-left h1 { font-size: 22px; font-weight: 700; }
+  .header-left p  { font-size: 12px; opacity: 0.8; margin-top: 3px; }
+  .aws-badge {
+    background: #FF9900;
+    color: #000;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ── COLLEGE INFO BANNER ── */
+  .college-banner {
+    background: white;
+    border-left: 5px solid #1a237e;
+    margin: 20px 30px;
+    padding: 14px 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .col-info span { font-size: 11px; color: #888; display: block; }
+  .col-info strong { font-size: 13px; color: #1a237e; }
+
+  /* ── LAYOUT ── */
+  .main { padding: 0 30px 30px; display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
+
+  /* ── CARD ── */
+  .card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .card-header {
+    background: #1a237e;
+    color: white;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .card-body { padding: 20px; }
+
+  /* ── FORM ── */
+  .form-group { margin-bottom: 14px; }
+  .form-group label { font-size: 12px; color: #555; font-weight: 500; display: block; margin-bottom: 5px; }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    color: #333;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus { border-color: #1a237e; }
+
+  .btn {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .btn-primary { background: #1a237e; color: white; }
+  .btn-primary:hover { background: #283593; }
+  .btn-success { background: #2e7d32; color: white; }
+  .btn-success:hover { background: #388e3c; }
+  .btn-danger  { background: #c62828; color: white; }
+  .btn-danger:hover  { background: #d32f2f; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid #1a237e;
+    color: #1a237e;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .btn-outline:hover { background: #e8eaf6; }
+
+  /* ── STATS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .stat-box .num {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a237e;
+  }
+  .stat-box .num.green { color: #2e7d32; }
+  .stat-box .num.red   { color: #c62828; }
+  .stat-box .num.orange { color: #e65100; }
+  .stat-box .lbl { font-size: 11px; color: #888; margin-top: 4px; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 20px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 6px; }
+  .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #1a237e, #5c6bc0); transition: width 0.4s; }
+
+  /* ── TABLE ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: #e8eaf6;
+    color: #1a237e;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid #f0f0f0; }
+  tr:hover td { background: #fafafa; }
+
+  .pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill-present { background: #e8f5e9; color: #2e7d32; }
+  .pill-absent  { background: #ffebee; color: #c62828; }
+  .pill-late    { background: #fff3e0; color: #e65100; }
+
+  .action-btns { display: flex; gap: 6px; }
+  .icon-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .icon-btn:hover { background: #f0f0f0; }
+
+  /* ── AWS INFO BOX ── */
+  .aws-box {
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #5d4037;
+    line-height: 1.8;
+  }
+  .aws-box strong { color: #e65100; display: block; margin-bottom: 4px; }
+
+  /* ── EMPTY STATE ── */
+  .empty { text-align: center; padding: 40px 20px; color: #aaa; }
+  .empty .emoji { font-size: 40px; }
+  .empty p { margin-top: 10px; font-size: 13px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #1a237e; color: white;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    opacity: 0; transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: #2e7d32; }
+  .toast.error { background: #c62828; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex; gap: 10px; align-items: center;
+    margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .filter-bar select, .filter-bar input {
+    padding: 7px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    outline: none;
+  }
+  .filter-bar select:focus, .filter-bar input:focus { border-color: #1a237e; }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; padding: 0 16px 24px; }
+    .header { padding: 16px; flex-direction: column; gap: 10px; text-align: center; }
+    .college-banner { margin: 16px; gap: 16px; }
+    .stats-grid { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<div class="header">
+  <div class="header-left">
+    <h1>☁️ Attendance Tracker</h1>
+    <p>Cloud Computing Subject Project</p>
+  </div>
+</div>
+
+<!-- ── COLLEGE INFO ── -->
+<div class="college-banner">
+  <div class="col-info"><span>College</span><strong>AGC</strong></div>
+  <div class="col-info"><span>Department</span><strong>Computer Science & Engineering</strong></div>
+  <div class="col-info"><span>Subject</span><strong>Cloud Computing (CS-601)</strong></div>
+  <div class="col-info"><span>Session</span><strong>2023–27</strong></div>
+  <div class="col-info"><span>Teacher</span><strong>Prof.ABC</strong></div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div class="main">
+
+  <!-- LEFT: FORM -->
+  <div>
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-header">📝 Mark Attendance</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Student Name</label>
+          <input type="text" id="f-name" placeholder="e.g. Arjun Sharma">
+        </div>
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="f-roll" placeholder="e.g. 2100123">
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select id="f-subject">
+            <option>Cloud Computing</option>
+            <option>Data Structures</option>
+            <option>DBMS</option>
+            <option>Operating Systems</option>
+            <option>Computer Networks</option>
+            <option>Software Engineering</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="f-date">
+        </div>
+        <button class="btn btn-success" onclick="markAs('Present')">✅ Mark Present</button>
+        <button class="btn btn-danger"  onclick="markAs('Absent')">❌ Mark Absent</button>
+        <button class="btn btn-primary" onclick="markAs('Late')">⏰ Mark Late</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: DASHBOARD -->
+  <div>
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="num" id="s-total">0</div>
+        <div class="lbl">Total Records</div>
+      </div>
+      <div class="stat-box">
+        <div class="num green" id="s-present">0</div>
+        <div class="lbl">Present</div>
+      </div>
+      <div class="stat-box">
+        <div class="num red" id="s-absent">0</div>
+        <div class="lbl">Absent</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body" style="padding:16px 20px;">
+        <div class="progress-wrap" style="margin-bottom:0">
+          <div class="progress-label">
+            <span>Overall Attendance</span>
+            <span id="pct-label">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="pct-fill" style="width:0%"></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#888;margin-top:8px;">
+          ⚠️ Minimum required: <strong>75%</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>📋 Attendance Records</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-outline" onclick="clearAll()">🗑 Clear All</button>
+          <button class="btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Filter -->
+        <div class="filter-bar">
+          <select id="filter-subject" onchange="renderTable()">
+            <option value="">All Subjects</option>
+            <option>Cloud Computing</option>
+            <option>Data Structures</option>
+            <option>DBMS</option>
+            <option>Operating Systems</option>
+            <option>Computer Networks</option>
+            <option>Software Engineering</option>
+          </select>
+          <select id="filter-status" onchange="renderTable()">
+            <option value="">All Status</option>
+            <option>Present</option>
+            <option>Absent</option>
+            <option>Late</option>
+          </select>
+          <input type="text" id="filter-search" placeholder="🔍 Search name / roll..." oninput="renderTable()" style="flex:1;min-width:140px;">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Roll No.</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="att-body"></tbody>
+          </table>
+          <div class="empty" id="empty-state">
+            <div class="emoji">📭</div>
+            <p>No records yet. Mark attendance using the form on the left.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── DATA ──
+  let records = JSON.parse(localStorage.getItem('att_records') || '[]');
+
+  // Set today's date as default
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+  // ── MARK ATTENDANCE ──
+  function markAs(status) {
+    const name    = document.getElementById('f-name').value.trim();
+    const roll    = document.getElementById('f-roll').value.trim();
+    const subject = document.getElementById('f-subject').value;
+    const date    = document.getElementById('f-date').value;
+
+    if (!name)  { showToast('Please enter student name', 'error'); return; }
+    if (!roll)  { showToast('Please enter roll number', 'error'); return; }
+    if (!date)  { showToast('Please select a date', 'error'); return; }
+
+    // Check for duplicate
+    const dup = records.find(r => r.roll === roll && r.subject === subject && r.date === date);
+    if (dup) {
+      dup.status = status;
+      showToast(`Updated ${name}'s attendance to ${status}`, status === 'Present' ? 'success' : '');
+    } else {
+      records.push({ id: Date.now(), name, roll, subject, date, status });
+      showToast(`${name} marked as ${status}`, status === 'Present' ? 'success' : '');
+    }
+
+    save();
+    renderTable();
+    updateStats();
+
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-roll').value = '';
+  }
+
+  // ── RENDER TABLE ──
+  function renderTable() {
+    const subFilter    = document.getElementById('filter-subject').value;
+    const statusFilter = document.getElementById('filter-status').value;
+    const search       = document.getElementById('filter-search').value.toLowerCase();
+
+    let filtered = records.filter(r => {
+      return (!subFilter    || r.subject === subFilter)
+          && (!statusFilter || r.status  === statusFilter)
+          && (!search       || r.name.toLowerCase().includes(search) || r.roll.toLowerCase().includes(search));
+    });
+
+    const tbody = document.getElementById('att-body');
+    tbody.innerHTML = '';
+    document.getElementById('empty-state').style.display = filtered.length ? 'none' : 'block';
+
+    filtered.forEach((r, i) => {
+      const pillClass = r.status === 'Present' ? 'pill-present'
+                      : r.status === 'Absent'  ? 'pill-absent' : 'pill-late';
+      tbody.innerHTML += `
+        <tr>
+          <td style="color:#aaa">${i+1}</td>
+          <td><strong>${r.name}</strong></td>
+          <td style="color:#555">${r.roll}</td>
+          <td style="color:#1a237e">${r.subject}</td>
+          <td style="color:#888">${formatDate(r.date)}</td>
+          <td><span class="pill ${pillClass}">${r.status}</span></td>
+          <td>
+            <div class="action-btns">
+              <button class="icon-btn" onclick="toggleStatus(${r.id})" title="Toggle Status">🔄</button>
+              <button class="icon-btn" onclick="deleteRecord(${r.id})" title="Delete">🗑️</button>
+            </div>
+          </td>
+        </tr>`;
+    });
+  }
+
+  // ── STATS ──
+  function updateStats() {
+    const total   = records.length;
+    const present = records.filter(r => r.status === 'Present').length;
+    const absent  = records.filter(r => r.status === 'Absent').length;
+    const pct     = total ? Math.round((present / total) * 100) : 0;
+
+    document.getElementById('s-total').textContent   = total;
+    document.getElementById('s-present').textContent = present;
+    document.getElementById('s-absent').textContent  = absent;
+    document.getElementById('pct-label').textContent = pct + '%';
+    document.getElementById('pct-fill').style.width  = pct + '%';
+  }
+
+  // ── TOGGLE STATUS ──
+  function toggleStatus(id) {
+    const r = records.find(r => r.id === id);
+    if (!r) return;
+    const cycle = { Present: 'Absent', Absent: 'Late', Late: 'Present' };
+    r.status = cycle[r.status];
+    save(); renderTable(); updateStats();
+    showToast(`Status updated to ${r.status}`);
+  }
+
+  // ── DELETE ──
+  function deleteRecord(id) {
+    records = records.filter(r => r.id !== id);
+    save(); renderTable(); updateStats();
+    showToast('Record deleted');
+  }
+
+  // ── CLEAR ALL ──
+  function clearAll() {
+    if (!records.length) return;
+    if (!confirm('Delete ALL attendance records?')) return;
+    records = [];
+    save(); renderTable(); updateStats();
+    showToast('All records cleared');
+  }
+
+  // ── EXPORT CSV ──
+  function exportCSV() {
+    if (!records.length) { showToast('No records to export', 'error'); return; }
+    const header = 'Name,Roll No,Subject,Date,Status\n';
+    const rows   = records.map(r => `${r.name},${r.roll},${r.subject},${r.date},${r.status}`).join('\n');
+    const blob   = new Blob([header + rows], { type: 'text/csv' });
+    const a      = document.createElement('a');
+    a.href       = URL.createObjectURL(blob);
+    a.download   = 'attendance.csv';
+    a.click();
+    showToast('CSV downloaded!', 'success');
+  }
+
+  // ── HELPERS ──
+  function save() { localStorage.setItem('att_records', JSON.stringify(records)); }
+
+  function formatDate(d) {
+    if (!d) return '';
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${day} ${months[parseInt(m)-1]} ${y}`;
+  }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => { t.className = 'toast'; }, 2500);
+  }
+
+  // ── INIT ──
+  renderTable();
+  updateStats();
+</script>
+</body>
+</html>
