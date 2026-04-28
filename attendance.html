@@ -13,8 +13,6 @@
     background: #f0f4f8;
     min-height: 100vh;
   }
-
-  /* ── HEADER ── */
   .header {
     background: linear-gradient(135deg, #1a237e, #283593);
     color: white;
@@ -34,8 +32,6 @@
     font-size: 12px;
     font-weight: 600;
   }
-
-  /* ── COLLEGE INFO BANNER ── */
   .college-banner {
     background: white;
     border-left: 5px solid #1a237e;
@@ -49,11 +45,7 @@
   }
   .col-info span { font-size: 11px; color: #888; display: block; }
   .col-info strong { font-size: 13px; color: #1a237e; }
-
-  /* ── LAYOUT ── */
   .main { padding: 0 30px 30px; display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
-
-  /* ── CARD ── */
   .card {
     background: white;
     border-radius: 10px;
@@ -68,8 +60,6 @@
     font-weight: 600;
   }
   .card-body { padding: 20px; }
-
-  /* ── FORM ── */
   .form-group { margin-bottom: 14px; }
   .form-group label { font-size: 12px; color: #555; font-weight: 500; display: block; margin-bottom: 5px; }
   .form-group input,
@@ -117,8 +107,6 @@
     cursor: pointer;
   }
   .btn-outline:hover { background: #e8eaf6; }
-
-  /* ── STATS ── */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -141,14 +129,10 @@
   .stat-box .num.red   { color: #c62828; }
   .stat-box .num.orange { color: #e65100; }
   .stat-box .lbl { font-size: 11px; color: #888; margin-top: 4px; }
-
-  /* ── PROGRESS ── */
   .progress-wrap { margin-bottom: 20px; }
   .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #555; margin-bottom: 6px; }
   .progress-bar { background: #e0e0e0; border-radius: 10px; height: 10px; overflow: hidden; }
   .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #1a237e, #5c6bc0); transition: width 0.4s; }
-
-  /* ── TABLE ── */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th {
@@ -184,8 +168,6 @@
     transition: background 0.2s;
   }
   .icon-btn:hover { background: #f0f0f0; }
-
-  /* ── AWS INFO BOX ── */
   .aws-box {
     background: #fff8e1;
     border: 1px solid #ffe082;
@@ -197,13 +179,9 @@
     line-height: 1.8;
   }
   .aws-box strong { color: #e65100; display: block; margin-bottom: 4px; }
-
-  /* ── EMPTY STATE ── */
   .empty { text-align: center; padding: 40px 20px; color: #aaa; }
   .empty .emoji { font-size: 40px; }
   .empty p { margin-top: 10px; font-size: 13px; }
-
-  /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 24px; right: 24px;
     background: #1a237e; color: white;
@@ -217,8 +195,6 @@
   .toast.show { opacity: 1; transform: translateY(0); }
   .toast.success { background: #2e7d32; }
   .toast.error { background: #c62828; }
-
-  /* ── FILTER BAR ── */
   .filter-bar {
     display: flex; gap: 10px; align-items: center;
     margin-bottom: 16px; flex-wrap: wrap;
@@ -242,16 +218,12 @@
 </style>
 </head>
 <body>
-
-<!-- ── HEADER ── -->
 <div class="header">
   <div class="header-left">
     <h1>☁️ Attendance Tracker</h1>
     <p>Cloud Computing Subject Project</p>
   </div>
 </div>
-
-<!-- ── COLLEGE INFO ── -->
 <div class="college-banner">
   <div class="col-info"><span>College</span><strong>AGC</strong></div>
   <div class="col-info"><span>Department</span><strong>Computer Science & Engineering</strong></div>
@@ -259,11 +231,7 @@
   <div class="col-info"><span>Session</span><strong>2023–27</strong></div>
   <div class="col-info"><span>Teacher</span><strong>Prof.ABC</strong></div>
 </div>
-
-<!-- ── MAIN LAYOUT ── -->
 <div class="main">
-
-  <!-- LEFT: FORM -->
   <div>
     <div class="card" style="margin-bottom:20px;">
       <div class="card-header">📝 Mark Attendance</div>
@@ -298,10 +266,7 @@
     </div>
 
   </div>
-
-  <!-- RIGHT: DASHBOARD -->
   <div>
-    <!-- Stats -->
     <div class="stats-grid">
       <div class="stat-box">
         <div class="num" id="s-total">0</div>
@@ -316,8 +281,6 @@
         <div class="lbl">Absent</div>
       </div>
     </div>
-
-    <!-- Progress -->
     <div class="card" style="margin-bottom:20px;">
       <div class="card-body" style="padding:16px 20px;">
         <div class="progress-wrap" style="margin-bottom:0">
@@ -334,8 +297,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Table -->
     <div class="card">
       <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
         <span>📋 Attendance Records</span>
@@ -345,7 +306,6 @@
         </div>
       </div>
       <div class="card-body">
-        <!-- Filter -->
         <div class="filter-bar">
           <select id="filter-subject" onchange="renderTable()">
             <option value="">All Subjects</option>
@@ -390,18 +350,11 @@
 
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── DATA ──
   let records = JSON.parse(localStorage.getItem('att_records') || '[]');
-
-  // Set today's date as default
   document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
-
-  // ── MARK ATTENDANCE ──
   function markAs(status) {
     const name    = document.getElementById('f-name').value.trim();
     const roll    = document.getElementById('f-roll').value.trim();
@@ -411,8 +364,6 @@
     if (!name)  { showToast('Please enter student name', 'error'); return; }
     if (!roll)  { showToast('Please enter roll number', 'error'); return; }
     if (!date)  { showToast('Please select a date', 'error'); return; }
-
-    // Check for duplicate
     const dup = records.find(r => r.roll === roll && r.subject === subject && r.date === date);
     if (dup) {
       dup.status = status;
@@ -429,8 +380,6 @@
     document.getElementById('f-name').value = '';
     document.getElementById('f-roll').value = '';
   }
-
-  // ── RENDER TABLE ──
   function renderTable() {
     const subFilter    = document.getElementById('filter-subject').value;
     const statusFilter = document.getElementById('filter-status').value;
@@ -466,8 +415,6 @@
         </tr>`;
     });
   }
-
-  // ── STATS ──
   function updateStats() {
     const total   = records.length;
     const present = records.filter(r => r.status === 'Present').length;
@@ -480,9 +427,7 @@
     document.getElementById('pct-label').textContent = pct + '%';
     document.getElementById('pct-fill').style.width  = pct + '%';
   }
-
-  // ── TOGGLE STATUS ──
-  function toggleStatus(id) {
+    function toggleStatus(id) {
     const r = records.find(r => r.id === id);
     if (!r) return;
     const cycle = { Present: 'Absent', Absent: 'Late', Late: 'Present' };
@@ -490,15 +435,11 @@
     save(); renderTable(); updateStats();
     showToast(`Status updated to ${r.status}`);
   }
-
-  // ── DELETE ──
   function deleteRecord(id) {
     records = records.filter(r => r.id !== id);
     save(); renderTable(); updateStats();
     showToast('Record deleted');
   }
-
-  // ── CLEAR ALL ──
   function clearAll() {
     if (!records.length) return;
     if (!confirm('Delete ALL attendance records?')) return;
@@ -506,8 +447,6 @@
     save(); renderTable(); updateStats();
     showToast('All records cleared');
   }
-
-  // ── EXPORT CSV ──
   function exportCSV() {
     if (!records.length) { showToast('No records to export', 'error'); return; }
     const header = 'Name,Roll No,Subject,Date,Status\n';
@@ -519,25 +458,19 @@
     a.click();
     showToast('CSV downloaded!', 'success');
   }
-
-  // ── HELPERS ──
-  function save() { localStorage.setItem('att_records', JSON.stringify(records)); }
-
-  function formatDate(d) {
+   function save() { localStorage.setItem('att_records', JSON.stringify(records)); }
+   function formatDate(d) {
     if (!d) return '';
     const [y, m, day] = d.split('-');
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return `${day} ${months[parseInt(m)-1]} ${y}`;
   }
-
-  function showToast(msg, type = '') {
+    function showToast(msg, type = '') {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.className = 'toast show ' + type;
     setTimeout(() => { t.className = 'toast'; }, 2500);
   }
-
-  // ── INIT ──
   renderTable();
   updateStats();
 </script>
